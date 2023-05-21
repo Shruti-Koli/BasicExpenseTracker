@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-title">
+        <h1 style="margin:30px; text-align: center; text-decoration: underline; font-weight: bolder;">Expense Tracker</h1>
+    </div>
+    <form id="get-form">
+        <div class="container form1">
+            <div class="row">
+                <div class="col-md-6 gy-2">
+                    <label for="amount" class="form-label">Add Amount:</label>
+                </div>
+                <div class="col-md-6 gy-2">
+                    <input type="number" min="0" id="amount" name="amount" class="form-control" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 gy-2">
+                    <label for="desc" class="form-label">Item Description:</label>
+                </div>
+                <div class="col-md-6 gy-2">
+                    <input type="text" id="desc" name="desc" class="form-control" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 gy-2">
+                    <label for="category" class="form-label">Select Category:</label>
+                </div>
+                <div class="col-md-6 gy-2">
+                    <select name="category" id="category" class="form-select" required>
+                        <option value="Fuel">Fuel</option>
+                        <option value="Food">Food</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Movie">Movie</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row submitbutton">
+                <div class="gy-4">
+                    <input type="submit" class="btn btn-primary" value="Add Expense">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="displayres" id="displayres">
+
+    </div>
+
+    <script>
+        form = document.getElementById("get-form");
+        form.addEventListener("submit",whensubmit);
+        function whensubmit(e){
+            e.preventDefault();
+            let myObj= {
+                amount: e.target.amount.value,
+                desc: e.target.desc.value,
+                category: e.target.category.value
+            }
+
+            let myObjstr= JSON.stringify(myObj);
+            localStorage.setItem(e.target.desc.value,myObjstr);
+
+            let data = document.createTextNode(myObj.amount+" Rs - "+myObj.desc+" - "+myObj.category+"  ");
+            var todisp = document.getElementById("displayres");
+            todisp.appendChild(data);
+
+
+            // delete button
+            let delBtn = document.createElement('button');
+            delBtn.className="btn btn-primary";
+            delBtn.style.margin="7px 20px"
+            
+            delBtn.onclick=()=>{
+                if(confirm("are you sure?")){
+                    var todel =delBtn.previousSibling;
+                    todisp.removeChild(todel);
+                    todisp.removeChild(delBtn);
+                    localStorage.removeItem(myObj.desc);
+                }
+            }
+            delBtn.appendChild(document.createTextNode("Delete"));
+            todisp.appendChild(delBtn);
+
+            //edit button
+            let editBtn = document.createElement('button');
+            editBtn.className="btn btn-primary";
+            
+            editBtn.onclick=()=>{
+
+                var delbn = editBtn.previousSibling;
+                var todel =editBtn.previousSibling.previousSibling;
+
+                document.getElementById("amount").value = myObj.amount;
+                document.getElementById("desc").value = myObj.desc;  
+                document.getElementById("category").value = myObj.category;
+                todisp.removeChild(todel);
+                todisp.removeChild(delbn);
+                todisp.removeChild(editBtn);
+
+                    
+            }
+            editBtn.appendChild(document.createTextNode("Edit"));
+            todisp.appendChild(editBtn);
+            todisp.appendChild(document.createElement("br"));
+
+
+            e.target.amount.value="";
+            e.target.desc.value="";
+            e.target.category.value="";
+        }
+    </script>
+</body>
+</html>
